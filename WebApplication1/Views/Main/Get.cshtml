@@ -1,0 +1,197 @@
+<script>
+        $(document).ready(function () {
+                $('#mytable').on('click', '.edit', function () {
+                    let id = $(this).data('id');
+                    let email = $(this).data('email');
+                    let name = $(this).data('name');
+                    let departmentId = $(this).data('departmentid');
+                    $("#myOptionUpdate").val(departmentId);
+                    let position = $(this).data('position');
+                    let salary = $(this).data('salary');
+                    $('#EditModal').modal('show');
+                    $('.name_field').val(name);
+                    $('.email_field').val(email);
+                    $('.position_field').val(position);
+                    $('.salary_field').val(salary);
+                    $('.uid').val(id);
+                });
+                $('#mytable').on('click', '.delete', function () {
+                    let id = $(this).data('id');
+                    $('#DeleteModal').modal('show');
+                    $('.uid2').val(id);
+                });
+                $('#addnewBut').click(function () {
+                    let id = $( "#myOption" ).val();
+                    $('.depid').val(id);
+                });
+                $('#updateBtn').click(function() {
+                    let id = $( "#myOptionUpdate" ).val();
+                    $('.depid2').val(id);
+                });
+            });
+</script>
+
+<table class="table table-striped" id="mytable">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Position</th>
+        <th>Salary</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in ViewBag.Users)
+    {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.Email</td>
+            <td>@user.Name</td>
+            <td>@user.Department.Name</td>
+            <td>@user.Position</td>
+            <td>@user.Salary</td>
+            <td>
+                <a href="javascript:void(0);" class="btn btn-sm btn-info edit"
+                   data-Id="@user.Id"
+                   data-Email="@user.Email"
+                   data-Name="@user.Name"
+                   data-Department="@user.Department.Name"
+                   data-Departmentid="@user.DepartmentId"
+                   data-Position="@user.Position"
+                   data-Salary="@user.Salary">
+                    Змінити
+                </a>
+                <a href="javascript:void(0);" class="btn btn-sm btn-danger delete"
+                   data-Id="@user.Id">
+                    Видалити
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<button class="btn btn-outline-primary btn-block mt-1 mb-1" data-toggle="modal" data-target="#myModalAdd">
+    Додати нового працівника
+</button>
+
+<form action="/save" method="post">
+    <div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Додати нового працівника</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" name="Name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Email" class="form-control" placeholder="Email" required>
+                    </div>
+                    <input type="hidden" name="DepartmentId" class="depid">
+                    <div class="form-group">
+                        <select id="myOption" class="form-control">
+                            @foreach (var department in ViewBag.Departments)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Position" class="form-control" placeholder="Position" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Salary" class="form-control" placeholder="Salary"
+                               required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                    <button type="submit" id="addnewBut" class="btn btn-primary addnew">Зберегти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="/update" method="post">
+    <div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel2">Змінити працівника</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" name="Name" class="form-control name_field"
+                               placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Email" class="form-control email_field"
+                               placeholder="Email" required>
+                    </div>
+                    <input type="hidden" name="DepartmentId" class="depid2">
+                    <div class="form-group">
+                        <select id="myOptionUpdate" class="form-control">
+                            @foreach (var department in ViewBag.Departments)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Position" class="form-control position_field"
+                               placeholder="Position" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Salary" class="form-control salary_field"
+                               placeholder="Salary" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="Id" class="uid">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                    <button type="submit" id="updateBtn" class="btn btn-primary">Змінити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form id="add-row-form" action="/delete" method="post">
+    <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel3">Видалити працівника</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span
+                            aria-hidden="true">
+                            &times;
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <strong>Точно видалити?</strong>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="Id" class="form-control uid2" required>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрити</button>
+                    <button type="submit" class="btn btn-primary">Видалити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

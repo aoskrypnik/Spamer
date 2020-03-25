@@ -1,0 +1,106 @@
+<script>
+        $(document).ready(function () {
+                $('#mailTable').on('click', '.send', function () {
+                    let subject = $(this).data('subject');
+                    let text = $(this).data('text');
+                    $('#SendModal').modal('show');
+                    $('.subjectHidden').val(subject);
+                    $('.textHidden').val(text);
+                    $('.radioHidden').val('null');
+                });
+                $('#anotherBtn').click(function() {
+                    let subject = $('#subjectTextBox').val();
+                    let text = $('#textTextBox').val();
+                    let radio = $('input[name=radio]:checked').val();
+                    $('#SendModal').modal('show');
+                    $('.subjectHidden').val(subject);
+                    $('.textHidden').val(text);
+                    $('.radioHidden').val(radio);
+                })
+            });
+</script>
+
+<h4 class="d-flex justify-content-center">Оберіть існуючий лист</h4>
+<table class="table table-striped" id="mailTable">
+    <thead>
+    <tr>
+        <th>Тема</th>
+        <th>Текст</th>
+        <th>Дія</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var message in ViewBag.Messages)
+    {
+        <tr>
+            <td>@message.Subject</td>
+            <td>@message.Text</td>
+            <td>
+                <a href="javascript:void(0);" class="btn btn-sm btn-danger send"
+                   data-Subject="@message.Subject"
+                   data-Text="@message.Text">
+                    Надіслати
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h4 class="d-flex justify-content-center">Введіть інший лист</h4>
+<label for="subjectTextBox">Тема листа</label>
+<input class="form-control mb-1" type="text" id="subjectTextBox">
+<label for="textTextBox">Текст листа</label>
+<textarea class="form-control mb-1" id="textTextBox"></textarea>
+<label>Зберегти зазначене повідомлення в базу?</label>
+<div class="form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" type="radio" name="radio" value="yes" checked>
+        Так
+    </label>
+</div>
+<div class="form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" type="radio" name="radio" value="no">
+        Ні
+    </label>
+</div>
+<button id="anotherBtn" class="btn btn-outline-primary btn-block mt-2 mb-1" data-toggle="modal" data-target="#SendModal">
+    Надіслати інший лист
+</button>
+
+<form id="sendChosen" action="/send" method="post">
+    <div class="modal fade" id="SendModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Майже надіслано</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span
+                            aria-hidden="true">
+                            &times;
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>В який відділ бажаєте надіслати?</p>
+                    <div class="form-group">
+                        <select id="depOption" name="Department" class="form-control">
+                            <option value="0">All departments</option>
+                            @foreach (var department in ViewBag.Departments)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="Subject" class="form-control subjectHidden" required>
+                    <input type="hidden" name="Text" class="form-control textHidden" required>
+                    <input type="hidden" name="Radio" class="form-control radioHidden" required>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary">Надіслати</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
